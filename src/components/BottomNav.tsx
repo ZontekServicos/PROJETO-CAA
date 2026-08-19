@@ -22,7 +22,7 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
-            className="flex flex-col items-center justify-center flex-1 py-2 gap-0.5 transition-colors"
+            className="relative flex flex-col items-center justify-center flex-1 py-2 gap-0.5 transition-colors"
             style={{ minHeight: 56 }}
             aria-label={tab.label}
             aria-current={isActive ? 'page' : undefined}

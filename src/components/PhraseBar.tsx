@@ -1,4 +1,5 @@
 import type { CAACard } from '../types';
+import { buildPhrase } from '../utils/phrase';
 
 interface PhraseBarProps {
   selectedCards: CAACard[];
@@ -9,7 +10,7 @@ interface PhraseBarProps {
 }
 
 export default function PhraseBar({ selectedCards, onRemoveLast, onClear, onSpeak, isSpeaking }: PhraseBarProps) {
-  const phrase = selectedCards.map((c) => c.word).join(' ');
+  const phrase = buildPhrase(selectedCards);
   const hasCards = selectedCards.length > 0;
 
   return (

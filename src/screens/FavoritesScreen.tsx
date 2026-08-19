@@ -1,16 +1,8 @@
 import { useState } from 'react';
 import { sampleFavorites, basicCards } from '../data/cards';
+import { speak } from '../services/speechService';
 
 const mostUsed = basicCards.slice(0, 6);
-
-function speak(text: string) {
-  if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text + '.');
-  u.lang = 'pt-BR';
-  u.rate = 0.9;
-  window.speechSynthesis.speak(u);
-}
 
 export default function FavoritesScreen() {
   const [favorites, setFavorites] = useState(sampleFavorites);
@@ -109,6 +101,8 @@ export default function FavoritesScreen() {
 
             {/* Add phrase */}
             <button
+              disabled
+              aria-label="Adicionar frase favorita (indisponível nesta versão)"
               className="flex items-center justify-center gap-2 w-full rounded-2xl py-4 border-2 border-dashed font-700 text-sm"
               style={{ borderColor: '#D1D5DB', color: '#9CA3AF' }}
             >

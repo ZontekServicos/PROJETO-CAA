@@ -74,6 +74,8 @@ export default function ProfileScreen() {
           <h2 className="font-800 text-white text-xl">João Silva</h2>
           <p className="text-white text-sm font-500 mt-0.5" style={{ opacity: 0.8 }}>Usuário principal</p>
           <button
+            disabled
+            aria-label="Editar perfil (indisponível nesta versão)"
             className="mt-3 px-4 py-1.5 rounded-xl font-700 text-sm"
             style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)' }}
           >
@@ -89,6 +91,8 @@ export default function ProfileScreen() {
             { id: 'caregiver', label: 'Cuidador' },
           ].map((tab) => (
             <button
+              disabled
+              aria-label="Sair da conta (indisponível nesta versão)"
               key={tab.id}
               onClick={() => setActiveSection(tab.id as typeof activeSection)}
               className="flex-1 py-3 text-sm font-700 border-b-2 transition-colors"
@@ -228,6 +232,8 @@ export default function ProfileScreen() {
             ].map((item) => (
               <button
                 key={item.label}
+                disabled
+                aria-label={`${item.label} (indisponível nesta versão)`}
                 className="flex items-center gap-3 bg-white rounded-2xl px-4 py-4 border text-left"
                 style={{ borderColor: '#E2E8F0' }}
               >

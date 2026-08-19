@@ -1,15 +1,7 @@
 import { useState } from 'react';
 import { sampleHistory } from '../data/cards';
 import type { HistoryEntry } from '../types';
-
-function speak(text: string) {
-  if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'pt-BR';
-  u.rate = 0.9;
-  window.speechSynthesis.speak(u);
-}
+import { speak } from '../services/speechService';
 
 export default function HistoryScreen() {
   const [history, setHistory] = useState<HistoryEntry[]>(sampleHistory);
