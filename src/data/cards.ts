@@ -323,29 +323,55 @@ export const categoryCards: Record<string, CAACard[]> = {
   cores: createCards(
     "cores",
     [
-      ["cor-vermelho", "🔴", "Vermelho", "cores"],
-      ["cor-azul", "🔵", "Azul", "cores"],
-      ["cor-amarelo", "🟡", "Amarelo", "cores"],
-      ["cor-verde", "🟢", "Verde", "cores"],
-      ["cor-laranja", "🟠", "Laranja", "cores"],
-      ["cor-roxo", "🟣", "Roxo", "cores"],
-      ["cor-preto", "⚫", "Preto", "cores"],
-      ["cor-branco", "⚪", "Branco", "cores"],
+      ["cor-vermelho", "🔴", "Vermelho", "cores-basicas"],
+      ["cor-azul", "🔵", "Azul", "cores-basicas"],
+      ["cor-amarelo", "🟡", "Amarelo", "cores-basicas"],
+      ["cor-verde", "🟢", "Verde", "cores-basicas"],
+      ["cor-laranja", "🟠", "Laranja", "cores-basicas"],
+      ["cor-roxo", "🟣", "Roxo", "cores-basicas"],
+      ["cor-preto", "⚫", "Preto", "cores-basicas"],
+      ["cor-branco", "⚪", "Branco", "cores-basicas"],
+      ["cor-rosa", "🩷", "Rosa", "cores-basicas"],
+      ["cor-marrom", "🟤", "Marrom", "cores-basicas"],
+      ["cor-cinza", "🩶", "Cinza", "cores-basicas"],
     ],
     { bgColor: "#F8FAFC", textColor: "#334155", borderColor: "#CBD5E1" },
   ),
   numeros: createCards(
     "numeros",
-    Array.from(
-      { length: 11 },
-      (_, number) =>
-        [
-          `numero-${number}`,
-          String(number),
-          String(number),
-          "zero-a-dez",
-        ] as CardSeed,
-    ),
+    [
+      ...Array.from(
+        { length: 11 },
+        (_, number) =>
+          [
+            `numero-${number}`,
+            String(number),
+            String(number),
+            "zero-a-dez",
+          ] as CardSeed,
+      ),
+      ...Array.from(
+        { length: 10 },
+        (_, index) => {
+          const number = index + 11
+          return [
+            `numero-${number}`,
+            String(number),
+            String(number),
+            "onze-a-vinte",
+          ] as CardSeed
+        },
+      ),
+      ...[30, 40, 50, 60, 70, 80, 90, 100].map(
+        (number) =>
+          [
+            `numero-${number}`,
+            String(number),
+            String(number),
+            "dezenas",
+          ] as CardSeed,
+      ),
+    ],
     { bgColor: "#ECFDF5", textColor: "#065F46", borderColor: "#A7F3D0" },
   ),
   pessoas: [
@@ -482,6 +508,16 @@ export const categoryCards: Record<string, CAACard[]> = {
       borderColor: "#FECACA",
       category: "comida",
       subcategory: "lanche",
+    },
+    {
+      id: "banana",
+      emoji: "🍌",
+      word: "Banana",
+      bgColor: "#FEF9C3",
+      textColor: "#854D0E",
+      borderColor: "#FDE047",
+      category: "comida",
+      subcategory: "frutas",
     },
     {
       id: "pao",
@@ -625,7 +661,7 @@ export const categoryCards: Record<string, CAACard[]> = {
     ...createCards(
       "emocoes",
       [
-        ["irritado", "😤", "Irritado", "estado"],
+        ["irritado", "😤", "Irritado", "desconfortavel"],
         ["entediado", "🥱", "Entediado", "estado"],
         ["chateado", "😞", "Chateado", "estado"],
         ["com-medo", "😨", "Com medo", "estado"],
@@ -633,6 +669,8 @@ export const categoryCards: Record<string, CAACard[]> = {
         ["calmo", "😌", "Calmo", "estado"],
         ["frustrado", "😖", "Frustrado", "estado"],
         ["animado", "🤩", "Animado", "estado"],
+        ["com-sono", "🥱", "Com sono", "estado"],
+        ["agitado", "🤯", "Agitado", "estado"],
       ],
       { bgColor: "#FCE7F3", textColor: "#831843", borderColor: "#FBCFE8" },
     ),
@@ -820,7 +858,7 @@ export const categoryCards: Record<string, CAACard[]> = {
         ["fisioterapia", "🏃", "Fisioterapia", "profissionais"],
         ["psicologia", "🧠", "Psicologia", "profissionais"],
         ["esperar-terapia", "⏳", "Esperar", "rotina"],
-        ["fazer-atividade-terapia", "📝", "Fazer atividade", "atividades"],
+        ["fazer-atividade-terapia", "📝", "Fazer atividade", "rotina"],
         ["pausa-terapia", "⏸️", "Pausa", "rotina"],
         ["guardar-terapia", "📦", "Guardar", "rotina"],
         ["acabou-terapia", "✅", "Acabou", "rotina"],
@@ -829,6 +867,29 @@ export const categoryCards: Record<string, CAACard[]> = {
     ),
   ],
 }
+
+const principalIds = new Set([
+  "eu",
+  "quero",
+  "nao-quero",
+  "ir",
+  "sair",
+  "sim",
+  "nao",
+  "mais",
+  "parar",
+  "agua",
+  "comida",
+  "banheiro",
+  "ajuda",
+  "dor",
+])
+
+categoryCards.principais = [
+  ...basicCards.filter((card) => principalIds.has(card.id)),
+  categoryCards.acoes.find((card) => card.id === "esperar"),
+  categoryCards.terapia.find((card) => card.id === "acabou-terapia"),
+].filter((card): card is CAACard => Boolean(card))
 
 const categoryDefinitions: Category[] = [
   {
@@ -840,11 +901,6 @@ const categoryDefinitions: Category[] = [
     borderColor: "#C7D2FE",
     cardCount: 12,
     description: "Frases rápidas e essenciais",
-    subcategories: [
-      { id: "frases", name: "Frases", emoji: "💬", items: [] },
-      { id: "acoes", name: "Ações", emoji: "🚶", items: [] },
-      { id: "respostas", name: "Respostas", emoji: "✅", items: [] },
-    ],
   },
   {
     id: "pessoas",
@@ -873,6 +929,7 @@ const categoryDefinitions: Category[] = [
     borderColor: "#FDBA74",
     cardCount: 6,
     subcategories: [
+      { id: "frutas", name: "Frutas", emoji: "🍌", items: [] },
       { id: "cafe-da-manha", name: "Café da manhã", emoji: "🌅", items: [] },
       { id: "almoco", name: "Almoço", emoji: "🍽️", items: [] },
       { id: "lanche", name: "Lanche", emoji: "🥪", items: [] },
@@ -975,6 +1032,16 @@ const categoryDefinitions: Category[] = [
   },
 ]
 
+const subcategoryLabels: Record<string, string> = {
+  "cores-basicas": "Cores básicas",
+  desconfortavel: "Estou desconfortável",
+  letras: "Letras",
+  pernas: "Pernas / pés",
+  "zero-a-dez": "0–10",
+  "onze-a-vinte": "11–20",
+  dezenas: "Dezenas",
+}
+
 export const categories: Category[] = categoryDefinitions.map((category) => {
   const cards = categoryCards[category.id] ?? []
   const subcategories =
@@ -983,12 +1050,14 @@ export const categories: Category[] = categoryDefinitions.map((category) => {
       new Set(cards.map((card) => card.subcategory).filter(Boolean)),
     ).map((subcategory) => ({
       id: subcategory as string,
-      name: (subcategory as string)
-        .split("-")
-        .map(
-          (part) => part.charAt(0).toLocaleUpperCase("pt-BR") + part.slice(1),
-        )
-        .join(" "),
+      name:
+        subcategoryLabels[subcategory as string] ??
+        (subcategory as string)
+          .split("-")
+          .map(
+            (part) => part.charAt(0).toLocaleUpperCase("pt-BR") + part.slice(1),
+          )
+          .join(" "),
       emoji: "📁",
       items: [],
     }))

@@ -1,59 +1,72 @@
-import { useMemo, useState } from "react"
-import type { CAACard } from "../types"
-import { categories, categoryCards, basicCards } from "../data/cards"
-import CommunicationCard from "../components/CommunicationCard"
-import { speak } from "../services/speechService"
-import { buildPhrase } from "../utils/phrase"
+import { useMemo, useState } from "react";
+import type { CAACard } from "../types";
+import { categories, categoryCards, basicCards } from "../data/cards";
+import CommunicationCard from "../components/CommunicationCard";
+import { speak } from "../services/speechService";
+import { buildPhrase } from "../utils/phrase";
 
 export default function CategoriesScreen() {
   const [activeCategory, setActiveCategory] = useState<string | null>(
-    "principais",
-  )
-  const [selectedCards, setSelectedCards] = useState<CAACard[]>([])
-  const [search, setSearch] = useState("")
-  const [activeSubcategory, setActiveSubcategory] = useState<string>("todos")
+    null,
+  );
+  const [selectedCards, setSelectedCards] = useState<CAACard[]>([]);
+  const [search, setSearch] = useState("");
+  const [activeSubcategory, setActiveSubcategory] = useState<string>("todos");
 
   const currentCat = categories.find(
     (category) => category.id === activeCategory,
-  )
+  );
 
   const currentCards = useMemo(() => {
-    if (!activeCategory) return []
-    if (activeCategory === "principais")
-      return basicCards.filter((card) => card.category === "principais")
-    return (
+    if (!activeCategory) return [];
+    const cards =
+      currentCat?.subcategories?.flatMap((subcategory) => subcategory.items) ??
       categoryCards[activeCategory] ??
-      basicCards.filter((card) => card.category === activeCategory)
-    )
-  }, [activeCategory])
+      basicCards.filter((card) => card.category === activeCategory);
+
+    return cards;
+  }, [activeCategory, currentCat]);
 
   const subcategories = useMemo(() => {
     if (!currentCat?.subcategories || currentCat.subcategories.length === 0) {
-      return [{ id: "todos", name: "Todos", emoji: "📚" }]
+      return [{ id: "todos", name: "Todos", emoji: "📚" }];
     }
 
     return [
       { id: "todos", name: "Todos", emoji: "📚" },
-      ...currentCat.subcategories,
-    ]
-  }, [currentCat])
+      ...currentCat.subcategories.map((subcategory) => ({
+        id: subcategory.id,
+        name: subcategory.name,
+        emoji: subcategory.emoji,
+      })),
+    ];
+  }, [currentCat]);
 
   const filteredCards = useMemo(
     () =>
       currentCards.filter((card) => {
         const matchesSearch =
-          !search || card.word.toLowerCase().includes(search.toLowerCase())
+          !search || card.word.toLowerCase().includes(search.toLowerCase());
         const matchesSubcategory =
           activeSubcategory === "todos" ||
-          card.subcategory === activeSubcategory
-        return matchesSearch && matchesSubcategory
+          card.subcategory === activeSubcategory;
+        return matchesSearch && matchesSubcategory;
       }),
     [activeSubcategory, currentCards, search],
-  )
+  );
+
+  const handleCategorySelect = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    const nextCategory = categories.find(
+      (category) => category.id === categoryId,
+    );
+    setActiveSubcategory(nextCategory?.subcategories?.[0]?.id ?? "todos");
+    setSearch("");
+  };
 
   const handleCardSelect = (card: CAACard) => {
-    setSelectedCards((prev) => [...prev, card])
-  }
+    setSelectedCards((prev) => [...prev, card]);
+  };
 
   if (activeCategory && currentCat) {
     return (
@@ -61,10 +74,10 @@ export default function CategoriesScreen() {
         <div className="flex items-center gap-3 px-4 py-4 bg-white border-b border-gray-100">
           <button
             onClick={() => {
-              setActiveCategory(null)
-              setSearch("")
-              setActiveSubcategory("todos")
-              setSelectedCards([])
+              setActiveCategory(null);
+              setSearch("");
+              setActiveSubcategory("todos");
+              setSelectedCards([]);
             }}
             className="flex items-center justify-center rounded-xl font-700 text-sm"
             style={{
@@ -128,7 +141,7 @@ export default function CategoriesScreen() {
         >
           <div className="flex gap-2">
             {subcategories.map((subcategory) => {
-              const isActive = activeSubcategory === subcategory.id
+              const isActive = activeSubcategory === subcategory.id;
               return (
                 <button
                   key={subcategory.id}
@@ -143,7 +156,7 @@ export default function CategoriesScreen() {
                 >
                   {subcategory.emoji} {subcategory.name}
                 </button>
-              )
+              );
             })}
           </div>
         </div>
@@ -180,7 +193,7 @@ export default function CategoriesScreen() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -202,10 +215,7 @@ export default function CategoriesScreen() {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => {
-                setActiveCategory(cat.id)
-                setActiveSubcategory("todos")
-              }}
+              onClick={() => handleCategorySelect(cat.id)}
               className="card-press flex flex-col items-start gap-3 rounded-2xl p-4 border-2 text-left"
               style={{
                 background: cat.bgColor,
@@ -243,5 +253,5 @@ export default function CategoriesScreen() {
         </div>
       </div>
     </div>
-  )
+  );
 }
